@@ -1,0 +1,80 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # HTTP method, query parameters, headers and body are forwarded to the
+          # downstream service automatically by Spring Cloud Gateway's proxy
+          # filters — no custom filter is required for that.
+          routes:
+            # ---------------- Students Service (:8081) ----------------
+            - id: students-service
+              uri: ${STUDENTS_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/students/**
+            - id: programs-service
+              uri: ${STUDENTS_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/programs/**
+            - id: contacts-service
+              uri: ${STUDENTS_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/contacts/**
+            - id: documents-service
+              uri: ${STUDENTS_SERVICE_URL:http://localhost:8081}
+              predicates:
+                - Path=/api/documents/**
+
+            # ---------------- Subjects Service (:8082) ----------------
+            - id: subjects-service
+              uri: ${SUBJECTS_SERVICE_URL:http://localhost:8082}
+              predicates:
+                - Path=/api/subjects/**
+            - id: teachers-service
+              uri: ${SUBJECTS_SERVICE_URL:http://localhost:8082}
+              predicates:
+                - Path=/api/teachers/**
+            - id: courses-service
+              uri: ${SUBJECTS_SERVICE_URL:http://localhost:8082}
+              predicates:
+                - Path=/api/courses/**
+
+            # ---------------- Enrollments Service (:8083) ----------------
+            - id: enrollments-service
+              uri: ${ENROLLMENTS_SERVICE_URL:http://localhost:8083}
+              predicates:
+                - Path=/api/enrollments/**
+            - id: grades-service
+              uri: ${ENROLLMENTS_SERVICE_URL:http://localhost:8083}
+              predicates:
+                - Path=/api/grades/**
+            - id: enrollment-status-history-service
+              uri: ${ENROLLMENTS_SERVICE_URL:http://localhost:8083}
+              predicates:
+                - Path=/api/enrollment-status-history/**
+
+          httpclient:
+            connect-timeout: 3000
+            response-timeout: 5s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
